@@ -26,6 +26,10 @@ const $ = id =>
     document.getElementById(id);
 
 
+/* =========================================
+   PARA FORMATLAMA
+   ========================================= */
+
 function money(value) {
 
     return new Intl.NumberFormat(
@@ -37,6 +41,10 @@ function money(value) {
     ).format(value) + " TL";
 }
 
+
+/* =========================================
+   GÜNCEL KASA
+   ========================================= */
 
 function currentBank() {
 
@@ -50,6 +58,10 @@ function currentBank() {
 }
 
 
+/* =========================================
+   KAYDET
+   ========================================= */
+
 function saveData() {
 
     localStorage.setItem(
@@ -58,6 +70,84 @@ function saveData() {
     );
 }
 
+
+/* =========================================
+   TÜM KAYITLARI YENİDEN HESAPLA
+   =========================================
+
+   Örneğin 2. günün riskini/oranını
+   değiştirirsek 2. günden sonraki
+   bütün kasalar yeniden hesaplanır.
+   ========================================= */
+
+function recalculateAll() {
+
+    let runningBank = data.start;
+
+    data.entries.forEach(
+        (item, index) => {
+
+            const risk =
+                Number(item.risk);
+
+            const odds =
+                Number(item.odds);
+
+            const stake =
+                runningBank *
+                risk /
+                100;
+
+            let profitLoss;
+
+            if (
+                item.result ===
+                "KAZANDI"
+            ) {
+
+                profitLoss =
+                    stake *
+                    (odds - 1);
+
+            } else {
+
+                profitLoss =
+                    -stake;
+            }
+
+            const endBank =
+                runningBank +
+                profitLoss;
+
+
+            item.day =
+                index + 1;
+
+            item.startBank =
+                runningBank;
+
+            item.stake =
+                stake;
+
+            item.profitLoss =
+                profitLoss;
+
+            item.endBank =
+                endBank;
+
+
+            runningBank =
+                endBank;
+        }
+    );
+
+    saveData();
+}
+
+
+/* =========================================
+   YENİ GÜN ÖN İZLEME
+   ========================================= */
 
 function calculatePreview() {
 
@@ -75,7 +165,10 @@ function calculatePreview() {
         );
 
     const stake =
-        startBank * risk / 100;
+        startBank *
+        risk /
+        100;
+
 
     $("stake").textContent =
         money(stake);
@@ -101,7 +194,8 @@ function calculatePreview() {
     ) {
 
         profitLoss =
-            stake * (odds - 1);
+            stake *
+            (odds - 1);
 
     } else {
 
@@ -111,7 +205,8 @@ function calculatePreview() {
 
 
     const endBank =
-        startBank + profitLoss;
+        startBank +
+        profitLoss;
 
 
     if (
@@ -122,7 +217,7 @@ function calculatePreview() {
         $("preview").textContent =
             "Tahmini net kâr: " +
             money(profitLoss) +
-            " • Gün sonu kasa: " +
+            " • Gün sonu: " +
             money(endBank);
 
     } else {
@@ -130,11 +225,15 @@ function calculatePreview() {
         $("preview").textContent =
             "Tahmini fire: " +
             money(stake) +
-            " • Gün sonu kasa: " +
+            " • Gün sonu: " +
             money(endBank);
     }
 }
 
+
+/* =========================================
+   TABLOYU EKRANA BAS
+   ========================================= */
 
 function render() {
 
@@ -142,7 +241,8 @@ function render() {
         currentBank();
 
     const totalProfitLoss =
-        bank - data.start;
+        bank -
+        data.start;
 
 
     const winningEntries =
@@ -164,7 +264,8 @@ function render() {
     const totalFire =
         fireEntries.reduce(
             (total, item) =>
-                total + item.stake,
+                total +
+                item.stake,
             0
         );
 
@@ -211,7 +312,8 @@ function render() {
         money(
             Math.max(
                 0,
-                TARGET_LOW - bank
+                TARGET_LOW -
+                bank
             )
         );
 
@@ -220,7 +322,8 @@ function render() {
         money(
             Math.max(
                 0,
-                TARGET_HIGH - bank
+                TARGET_HIGH -
+                bank
             )
         );
 
@@ -231,41 +334,44 @@ function render() {
 
     history.innerHTML =
         data.entries
-        .map(item => {
+        .map(
+            (item, index) => {
 
-            const resultClass =
-                item.result ===
-                "KAZANDI"
-                    ? "win"
-                    : "fire";
-
-
-            const profitClass =
-                item.profitLoss >= 0
-                    ? "pos"
-                    : "neg";
+                const resultClass =
+                    item.result ===
+                    "KAZANDI"
+                        ? "win"
+                        : "fire";
 
 
-            const profitText =
-                item.profitLoss >= 0
-                    ? "+" +
-                      money(
-                          item.profitLoss
-                      )
-                    : "-" +
-                      money(
-                          Math.abs(
+                const profitClass =
+                    item.profitLoss >= 0
+                        ? "pos"
+                        : "neg";
+
+
+                const profitText =
+                    item.profitLoss >= 0
+                        ? "+" +
+                          money(
                               item.profitLoss
                           )
-                      );
+                        : "-" +
+                          money(
+                              Math.abs(
+                                  item.profitLoss
+                              )
+                          );
 
 
-            return `
+                return `
+
                 <tr>
 
                     <td>
                         ${item.day}
                     </td>
+
 
                     <td>
                         ${money(
@@ -273,11 +379,22 @@ function render() {
                         )}
                     </td>
 
+
+                    <!-- RİSK DÜZENLENEBİLİR -->
+
                     <td>
-                        %${Number(
-                            item.risk
-                        ).toFixed(2)}
+
+                        <input
+                            class="table-input risk-edit"
+                            type="number"
+                            min="0.01"
+                            max="100"
+                            step="0.01"
+                            value="${item.risk}"
+                            data-index="${index}">
+
                     </td>
+
 
                     <td>
                         ${money(
@@ -285,22 +402,39 @@ function render() {
                         )}
                     </td>
 
+
+                    <!-- ORAN DÜZENLENEBİLİR -->
+
                     <td>
-                        ${Number(
-                            item.odds
-                        ).toFixed(2)}
+
+                        <input
+                            class="table-input odds-edit"
+                            type="number"
+                            min="1.01"
+                            step="0.01"
+                            value="${item.odds}"
+                            data-index="${index}">
+
                     </td>
 
+
+                    <!-- SONUÇ -->
+
                     <td>
 
-                        <span
-                            class="tag ${resultClass}">
+                        <button
+                            type="button"
+                            class="table-result ${resultClass}"
+                            data-index="${index}">
 
                             ${item.result}
 
-                        </span>
+                        </button>
 
                     </td>
+
+
+                    <!-- KÂR / ZARAR -->
 
                     <td
                         class="${profitClass}">
@@ -308,6 +442,9 @@ function render() {
                         ${profitText}
 
                     </td>
+
+
+                    <!-- GÜN SONU -->
 
                     <td>
 
@@ -319,10 +456,28 @@ function render() {
 
                     </td>
 
-                </tr>
-            `;
 
-        })
+                    <!-- SİL -->
+
+                    <td>
+
+                        <button
+                            type="button"
+                            class="delete-row"
+                            data-index="${index}"
+                            title="Kaydı Sil">
+
+                            🗑️
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+                `;
+            }
+        )
         .join("");
 
 
@@ -332,9 +487,240 @@ function render() {
             : "block";
 
 
+    addTableEvents();
+
     calculatePreview();
 }
 
+
+/* =========================================
+   TABLO İÇİ DÜZENLEME OLAYLARI
+   ========================================= */
+
+function addTableEvents() {
+
+
+    /* -------------------------
+       RİSK DEĞİŞTİR
+       ------------------------- */
+
+    document
+    .querySelectorAll(
+        ".risk-edit"
+    )
+    .forEach(input => {
+
+        input.addEventListener(
+            "change",
+            function () {
+
+                const index =
+                    Number(
+                        this.dataset.index
+                    );
+
+                const value =
+                    parseFloat(
+                        this.value
+                    );
+
+
+                if (
+                    !Number.isFinite(value) ||
+                    value <= 0 ||
+                    value > 100
+                ) {
+
+                    alert(
+                        "Risk % 0 ile 100 arasında olmalıdır."
+                    );
+
+                    render();
+
+                    return;
+                }
+
+
+                data.entries[
+                    index
+                ].risk =
+                    value;
+
+
+                recalculateAll();
+
+                render();
+            }
+        );
+    });
+
+
+    /* -------------------------
+       ORAN DEĞİŞTİR
+       ------------------------- */
+
+    document
+    .querySelectorAll(
+        ".odds-edit"
+    )
+    .forEach(input => {
+
+        input.addEventListener(
+            "change",
+            function () {
+
+                const index =
+                    Number(
+                        this.dataset.index
+                    );
+
+                const value =
+                    parseFloat(
+                        this.value
+                    );
+
+
+                if (
+                    !Number.isFinite(value) ||
+                    value <= 1
+                ) {
+
+                    alert(
+                        "Geçerli bir oran gir."
+                    );
+
+                    render();
+
+                    return;
+                }
+
+
+                data.entries[
+                    index
+                ].odds =
+                    value;
+
+
+                recalculateAll();
+
+                render();
+            }
+        );
+    });
+
+
+    /* -------------------------
+       KAZANDI / FİRE DEĞİŞTİR
+       ------------------------- */
+
+    document
+    .querySelectorAll(
+        ".table-result"
+    )
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                const index =
+                    Number(
+                        this.dataset.index
+                    );
+
+
+                if (
+                    data.entries[
+                        index
+                    ].result ===
+                    "KAZANDI"
+                ) {
+
+                    data.entries[
+                        index
+                    ].result =
+                        "FİRE";
+
+                } else {
+
+                    data.entries[
+                        index
+                    ].result =
+                        "KAZANDI";
+                }
+
+
+                recalculateAll();
+
+                render();
+            }
+        );
+    });
+
+
+    /* -------------------------
+       TEK KAYIT SİL
+       ------------------------- */
+
+    document
+    .querySelectorAll(
+        ".delete-row"
+    )
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                const index =
+                    Number(
+                        this.dataset.index
+                    );
+
+
+                const day =
+                    data.entries[
+                        index
+                    ].day;
+
+
+                const approved =
+                    confirm(
+                        day +
+                        ". gün kaydı silinsin mi?"
+                    );
+
+
+                if (!approved) {
+                    return;
+                }
+
+
+                data.entries.splice(
+                    index,
+                    1
+                );
+
+
+                /*
+                   Bir kayıt silinince
+                   kalan tüm günler ve
+                   kasa zinciri yeniden
+                   hesaplanır.
+                */
+
+                recalculateAll();
+
+                render();
+            }
+        );
+    });
+}
+
+
+/* =========================================
+   YENİ GÜN RİSK / ORAN
+   ========================================= */
 
 $("risk").addEventListener(
     "input",
@@ -348,8 +734,14 @@ $("odds").addEventListener(
 );
 
 
+/* =========================================
+   YENİ GÜN SONUÇ SEÇİMİ
+   ========================================= */
+
 document
-.querySelectorAll(".choice")
+.querySelectorAll(
+    ".choice"
+)
 .forEach(button => {
 
     button.addEventListener(
@@ -383,6 +775,10 @@ document
     );
 });
 
+
+/* =========================================
+   YENİ GÜN KAYDET
+   ========================================= */
 
 $("save").addEventListener(
     "click",
@@ -487,11 +883,18 @@ $("save").addEventListener(
 
             endBank:
                 endBank
+
         });
 
 
         saveData();
 
+
+        /*
+           Yeni gün eklendikten sonra
+           oran alanını temizliyoruz.
+           Risk yüzdesi aynı kalıyor.
+        */
 
         $("odds").value =
             "";
@@ -501,6 +904,10 @@ $("save").addEventListener(
     }
 );
 
+
+/* =========================================
+   TÜM KAYITLARI SİL
+   ========================================= */
 
 $("reset").addEventListener(
     "click",
@@ -533,5 +940,16 @@ $("reset").addEventListener(
     }
 );
 
+
+/* =========================================
+   UYGULAMA AÇILIŞI
+   ========================================= */
+
+/*
+   Eski kayıtlar varsa yeni sisteme
+   göre bir kez yeniden hesaplanır.
+*/
+
+recalculateAll();
 
 render();
