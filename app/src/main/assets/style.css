@@ -1,5 +1,5 @@
 /* ==================================================
-   KASA YÖNETİMİ - MOBİL UYUMLU TASARIM
+   KASA YÖNETİMİ - MOBİL TASARIM
    ================================================== */
 
 * {
@@ -9,7 +9,6 @@
 html {
     width: 100%;
     min-height: 100%;
-    overflow-x: hidden;
 }
 
 body {
@@ -45,7 +44,6 @@ header h1 {
 
 header p {
     margin: 5px 0 0;
-
     color: #cbd5e1;
     font-size: 13px;
 }
@@ -62,7 +60,7 @@ main {
     margin: auto;
 
     padding: 14px;
-    padding-bottom: 100px;
+    padding-bottom: 120px;
 }
 
 
@@ -183,7 +181,7 @@ main {
 
 
 /* ==================================================
-   RİSK VE ORAN
+   YENİ GÜN - RİSK / ORAN
    ================================================== */
 
 .row {
@@ -202,7 +200,7 @@ label {
     font-weight: bold;
 }
 
-input {
+.row input {
     width: 100%;
 
     margin-top: 6px;
@@ -215,6 +213,8 @@ input {
     border-radius: 10px;
 
     background: white;
+
+    color: #172033;
 
     font-size: 17px;
 }
@@ -252,7 +252,7 @@ input {
 
 
 /* ==================================================
-   SONUÇ
+   SONUÇ SEÇİMİ
    ================================================== */
 
 .result-title {
@@ -283,8 +283,6 @@ input {
     padding: 13px;
 
     font-weight: bold;
-
-    cursor: pointer;
 }
 
 .choice {
@@ -357,6 +355,16 @@ input {
     margin: 0;
 }
 
+.zoom-info {
+    display: block;
+
+    margin-top: 4px;
+
+    color: #98a2b3;
+
+    font-size: 10px;
+}
+
 .reset {
     flex-shrink: 0;
 
@@ -372,8 +380,7 @@ input {
 
 
 /* ==================================================
-   GÜNLÜK KAYIT TABLOSU
-   YATAY KAYDIRMA YOK
+   TABLO
    ================================================== */
 
 .table-wrap {
@@ -381,11 +388,8 @@ input {
 
     margin-top: 12px;
 
-    overflow-x: hidden;
+    overflow: hidden;
 }
-
-
-/* TABLO EKRANA SIĞACAK */
 
 table {
     width: 100%;
@@ -395,146 +399,210 @@ table {
     table-layout: fixed;
 
     border-collapse: collapse;
-
-    font-size: 9px;
 }
 
 
-/* TÜM HÜCRELER */
+/* ==================================================
+   TABLO HÜCRELERİ
+   ================================================== */
 
 th,
 td {
-    padding: 8px 2px;
-
     border-bottom:
         1px solid #eaecf0;
+
+    padding: 7px 1px;
 
     text-align: center;
 
     vertical-align: middle;
 
-    white-space: normal;
-
     overflow: hidden;
 
-    line-height: 1.2;
+    line-height: 1.15;
 }
-
-
-/* TABLO BAŞLIKLARI */
 
 th {
     background: #f9fafb;
 
     color: #475467;
 
-    font-size: 8px;
+    font-size: 7px;
 
     font-weight: bold;
+
+    white-space: normal;
+}
+
+td {
+    color: #172033;
+
+    font-size: 7.5px;
+
+    white-space: normal;
 }
 
 
 /* ==================================================
-   SÜTUN GENİŞLİKLERİ
+   9 SÜTUN GENİŞLİKLERİ
+   TOPLAM = %100
    ================================================== */
 
-/* GÜN */
-
+/* Gün */
 th:nth-child(1),
 td:nth-child(1) {
     width: 5%;
 }
 
 
-/* BAŞLANGIÇ KASA */
-
+/* Başlangıç Kasa */
 th:nth-child(2),
 td:nth-child(2) {
-    width: 16%;
-}
-
-
-/* RİSK */
-
-th:nth-child(3),
-td:nth-child(3) {
-    width: 8%;
-}
-
-
-/* OYNANAN TUTAR */
-
-th:nth-child(4),
-td:nth-child(4) {
-    width: 15%;
-}
-
-
-/* ORAN */
-
-th:nth-child(5),
-td:nth-child(5) {
-    width: 8%;
-}
-
-
-/* SONUÇ */
-
-th:nth-child(6),
-td:nth-child(6) {
     width: 14%;
 }
 
 
-/* KÂR ZARAR */
-
-th:nth-child(7),
-td:nth-child(7) {
-    width: 17%;
+/* Risk */
+th:nth-child(3),
+td:nth-child(3) {
+    width: 10%;
 }
 
 
-/* GÜN SONU KASA */
+/* Tutar */
+th:nth-child(4),
+td:nth-child(4) {
+    width: 13%;
+}
 
+
+/* Oran */
+th:nth-child(5),
+td:nth-child(5) {
+    width: 10%;
+}
+
+
+/* Sonuç */
+th:nth-child(6),
+td:nth-child(6) {
+    width: 13%;
+}
+
+
+/* K/Z */
+th:nth-child(7),
+td:nth-child(7) {
+    width: 13%;
+}
+
+
+/* Son Kasa */
 th:nth-child(8),
 td:nth-child(8) {
-    width: 17%;
+    width: 15%;
+}
+
+
+/* İşlem */
+th:nth-child(9),
+td:nth-child(9) {
+    width: 7%;
 }
 
 
 /* ==================================================
-   KAZANDI / FİRE ETİKETLERİ
+   TABLODA DÜZENLENEBİLİR
+   RİSK / ORAN KUTULARI
    ================================================== */
 
-.tag {
-    display: inline-block;
+.table-input {
+    display: block;
 
-    max-width: 100%;
+    width: 100%;
 
-    padding: 4px 3px;
+    min-width: 0;
 
-    border-radius: 20px;
+    height: 28px;
+
+    margin: 0;
+
+    padding: 2px 1px;
+
+    border:
+        1px solid #d0d5dd;
+
+    border-radius: 5px;
+
+    background: #ffffff;
+
+    color: #172033;
+
+    text-align: center;
 
     font-size: 8px;
+
+    font-weight: bold;
+
+    outline: none;
+}
+
+.table-input:focus {
+    border:
+        1px solid #2563eb;
+
+    background: #eff6ff;
+}
+
+
+/*
+   Android / Chrome number input
+   içindeki gereksiz alanları azaltır.
+*/
+
+.table-input::-webkit-inner-spin-button,
+.table-input::-webkit-outer-spin-button {
+    margin: 0;
+}
+
+
+/* ==================================================
+   TABLO SONUÇ BUTONU
+   ================================================== */
+
+.table-result {
+    width: 100%;
+
+    min-width: 0;
+
+    margin: 0;
+
+    padding: 5px 1px;
+
+    border: 0;
+
+    border-radius: 8px;
+
+    font-size: 6.5px;
 
     font-weight: bold;
 
     white-space: nowrap;
 }
 
-.tag.win {
+.table-result.win {
     background: #dcfce7;
     color: #166534;
 }
 
-.tag.fire {
+.table-result.fire {
     background: #fee2e2;
     color: #991b1b;
 }
 
 
 /* ==================================================
-   KÂR / ZARAR RENKLERİ
+   KÂR / ZARAR
    ================================================== */
 
 .pos {
@@ -547,6 +615,35 @@ td:nth-child(8) {
     color: #dc2626;
 
     font-weight: bold;
+}
+
+
+/* ==================================================
+   TEK KAYIT SİLME
+   ================================================== */
+
+.delete-row {
+    width: 25px;
+    height: 28px;
+
+    margin: auto;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+
+    border-radius: 7px;
+
+    background: #fee2e2;
+
+    color: #b42318;
+
+    padding: 0;
+
+    font-size: 13px;
 }
 
 
@@ -564,7 +661,7 @@ td:nth-child(8) {
 
 
 /* ==================================================
-   TELEFON TASARIMI
+   TELEFON
    ================================================== */
 
 @media (max-width: 520px) {
@@ -582,18 +679,17 @@ td:nth-child(8) {
         padding: 10px;
 
         /*
-         Son kaydın telefonun
-         alt navigasyon alanının
-         arkasında kalmaması için.
+          Son kayıt telefonun
+          alt kısmında kalmasın.
         */
-        padding-bottom: 120px;
+
+        padding-bottom: 140px;
     }
 
 
     .big {
         padding: 16px;
     }
-
 
     .big strong {
         font-size: 27px;
@@ -633,29 +729,30 @@ td:nth-child(8) {
         padding: 0 2px;
     }
 
-
     .panel-head h2 {
         font-size: 17px;
+    }
+
+    .zoom-info {
+        font-size: 9px;
     }
 
 
     .reset {
         padding: 8px;
 
-        font-size: 11px;
+        font-size: 10px;
     }
 
 
-    /*
-       TABLO MOBİLDE TAM GENİŞLİK
-    */
+    /* =========================
+       MOBİL TABLO
+       ========================= */
 
     .table-wrap {
         width: 100%;
 
-        overflow-x: hidden;
-
-        margin-top: 12px;
+        overflow: hidden;
     }
 
 
@@ -665,83 +762,135 @@ td:nth-child(8) {
         min-width: 0;
 
         table-layout: fixed;
-
-        font-size: 8px;
     }
 
 
     th {
-        padding: 7px 1px;
+        padding:
+            6px 1px;
 
-        font-size: 7px;
-
-        line-height: 1.15;
+        font-size:
+            6.5px;
     }
 
 
     td {
-        padding: 8px 1px;
+        padding:
+            7px 1px;
 
-        font-size: 8px;
-
-        line-height: 1.15;
-    }
-
-
-    .tag {
-        padding: 4px 2px;
-
-        font-size: 7px;
+        font-size:
+            7px;
     }
 
 
     /*
-       TL TUTARLARINDA SATIR
-       TAŞMASINI ENGELLE
+       Para sütunları biraz
+       daha küçük.
     */
 
     td:nth-child(2),
     td:nth-child(4),
     td:nth-child(7),
     td:nth-child(8) {
-        font-size: 7.5px;
+        font-size:
+            6.5px;
+    }
+
+
+    .table-input {
+        height: 27px;
+
+        padding:
+            1px 0;
+
+        font-size:
+            7px;
+
+        border-radius:
+            4px;
+    }
+
+
+    .table-result {
+        padding:
+            5px 0;
+
+        font-size:
+            5.8px;
+
+        border-radius:
+            6px;
+    }
+
+
+    .delete-row {
+        width: 22px;
+
+        height: 26px;
+
+        font-size: 12px;
+
+        border-radius:
+            6px;
     }
 }
 
 
 /* ==================================================
-   ÇOK DAR TELEFONLAR
+   ÇOK DAR TELEFON
    ================================================== */
 
 @media (max-width: 380px) {
 
     main {
-        padding-left: 6px;
-        padding-right: 6px;
-        padding-bottom: 120px;
+        padding-left: 5px;
+
+        padding-right: 5px;
+
+        padding-bottom: 140px;
     }
+
 
     .panel {
-        padding-left: 5px;
-        padding-right: 5px;
+        padding-left: 4px;
+
+        padding-right: 4px;
     }
 
+
     th {
+        font-size: 6px;
+    }
+
+
+    td {
         font-size: 6.5px;
     }
 
-    td {
-        font-size: 7px;
-    }
 
     td:nth-child(2),
     td:nth-child(4),
     td:nth-child(7),
     td:nth-child(8) {
+        font-size: 6px;
+    }
+
+
+    .table-input {
         font-size: 6.5px;
     }
 
-    .tag {
-        font-size: 6.5px;
+
+    .table-result {
+        font-size: 5.3px;
+    }
+
+
+    .delete-row {
+        width: 20px;
+
+        height: 25px;
+
+        font-size: 11px;
     }
 }
