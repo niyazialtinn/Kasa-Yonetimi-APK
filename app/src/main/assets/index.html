@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <title>Kasa Yönetimi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+    <div>
+        <h1>💰 Kasa Yönetimi</h1>
+        <p>Günlük Kasa Takip Sistemi</p>
+    </div>
+</header>
+
+<main>
+
+    <!-- ÖZET -->
+    <section class="summary">
+
+        <div class="big card">
+            <span>Güncel Kasa</span>
+
+            <strong id="currentBank">
+                20.000,00 TL
+            </strong>
+
+            <small id="totalPL">
+                Toplam Kâr/Zarar: 0,00 TL
+            </small>
+        </div>
+
+        <div class="stats">
+
+            <div class="card">
+                <span>Kazançlı Gün</span>
+                <b id="winDays">0</b>
+            </div>
+
+            <div class="card">
+                <span>Fireli Gün</span>
+                <b id="lossDays">0</b>
+            </div>
+
+            <div class="card">
+                <span>Toplam Fire</span>
+                <b id="totalFire">
+                    0,00 TL
+                </b>
+            </div>
+
+            <div class="card">
+                <span>Hedef</span>
+                <b>150K – 200K</b>
+            </div>
+
+        </div>
+
+        <div class="targets card">
+
+            <div>
+                <span>
+                    150.000 TL'ye Kalan
+                </span>
+
+                <b id="toLow">
+                    130.000,00 TL
+                </b>
+            </div>
+
+            <div>
+                <span>
+                    200.000 TL'ye Kalan
+                </span>
+
+                <b id="toHigh">
+                    180.000,00 TL
+                </b>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- YENİ GÜN -->
+    <section class="panel">
+
+        <h2>➕ Yeni Gün</h2>
+
+        <div class="row">
+
+            <label>
+                Risk %
+
+                <input
+                    id="risk"
+                    type="number"
+                    min="0.01"
+                    max="100"
+                    step="0.01"
+                    value="20">
+            </label>
+
+
+            <label>
+                Oran
+
+                <input
+                    id="odds"
+                    type="number"
+                    min="1.01"
+                    step="0.01"
+                    placeholder="Örn. 1.60">
+            </label>
+
+        </div>
+
+
+        <div class="calc">
+
+            <span>
+                Oynanacak Tutar
+            </span>
+
+            <strong id="stake">
+                4.000,00 TL
+            </strong>
+
+        </div>
+
+
+        <div class="result-title">
+            Sonuç
+        </div>
+
+
+        <div class="choices">
+
+            <button
+                class="choice win active"
+                data-result="KAZANDI">
+
+                ✅ KAZANDI
+
+            </button>
+
+
+            <button
+                class="choice fire"
+                data-result="FİRE">
+
+                🔥 FİRE
+
+            </button>
+
+        </div>
+
+
+        <div
+            class="preview"
+            id="preview">
+
+            Oranı girince tahmini gün sonu
+            burada görünecek.
+
+        </div>
+
+
+        <button
+            id="save"
+            class="primary">
+
+            Günü Kaydet
+
+        </button>
+
+    </section>
+
+
+    <!-- EXCEL TARZI TABLO -->
+    <section class="panel">
+
+        <div class="panel-head">
+
+            <h2>📊 Günlük Kayıtlar</h2>
+
+            <button
+                id="reset"
+                class="reset">
+
+                Tümünü Sıfırla
+
+            </button>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Gün</th>
+
+                        <th>
+                            Başlangıç Kasa
+                        </th>
+
+                        <th>
+                            Risk %
+                        </th>
+
+                        <th>
+                            Oynanan Tutar
+                        </th>
+
+                        <th>
+                            Oran
+                        </th>
+
+                        <th>
+                            Sonuç
+                        </th>
+
+                        <th>
+                            Kâr / Zarar
+                        </th>
+
+                        <th>
+                            Gün Sonu Kasa
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="history">
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <div
+            id="empty"
+            class="empty">
+
+            Henüz günlük kayıt yok.
+
+        </div>
+
+    </section>
+
+</main>
+
+<script src="app.js"></script>
+
+</body>
+</html>
