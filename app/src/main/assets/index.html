@@ -26,43 +26,6 @@
 <main>
 
     <!-- =========================
-         BAŞLANGIÇ KASASI
-         ========================= -->
-
-    <section class="panel start-bank-panel">
-
-        <h2>💵 Başlangıç Kasası</h2>
-
-        <div class="start-bank-row">
-
-            <input
-                id="startBankInput"
-                type="number"
-                min="1"
-                step="100"
-                inputmode="decimal"
-                placeholder="Başlangıç kasasını gir">
-
-            <button
-                type="button"
-                id="updateStartBank"
-                class="start-bank-button">
-
-                Kasayı Güncelle
-
-            </button>
-
-        </div>
-
-        <small class="start-bank-info">
-            Başlangıç kasasını istediğin zaman değiştirebilirsin.
-            Mevcut kayıtlar yeni kasaya göre otomatik yeniden hesaplanır.
-        </small>
-
-    </section>
-
-
-    <!-- =========================
          ÖZET
          ========================= -->
 
@@ -73,12 +36,21 @@
             <span>Güncel Kasa</span>
 
             <strong id="currentBank">
-                0,00 TL
+                20.000,00 TL
             </strong>
 
             <small id="totalPL">
                 Toplam Kâr/Zarar: 0,00 TL
             </small>
+
+            <button
+                type="button"
+                id="changeStartBank"
+                class="change-start-bank">
+
+                ✏️ Başlangıç Kasasını Değiştir
+
+            </button>
 
         </div>
 
@@ -112,12 +84,12 @@
 
             <div>
                 <span>150.000 TL'ye Kalan</span>
-                <b id="toLow">0,00 TL</b>
+                <b id="toLow">130.000,00 TL</b>
             </div>
 
             <div>
                 <span>200.000 TL'ye Kalan</span>
-                <b id="toHigh">0,00 TL</b>
+                <b id="toHigh">180.000,00 TL</b>
             </div>
 
         </div>
@@ -167,7 +139,7 @@
             <span>Oynanacak Tutar</span>
 
             <strong id="stake">
-                0,00 TL
+                4.000,00 TL
             </strong>
 
         </div>
