@@ -1,25 +1,19 @@
 const STORAGE_KEY = "kasa-excel-v2";
-const DEFAULT_START_BANK = 20000;
 
+const DEFAULT_START_BANK = 20000;
 const TARGET_LOW = 150000;
 const TARGET_HIGH = 200000;
 
 let data;
 
 try {
-
     data =
-        JSON.parse(
-            localStorage.getItem(
-                STORAGE_KEY
-            )
-        ) || {
+        JSON.parse(localStorage.getItem(STORAGE_KEY)) ||
+        {
             start: DEFAULT_START_BANK,
             entries: []
         };
-
 } catch (e) {
-
     data = {
         start: DEFAULT_START_BANK,
         entries: []
@@ -27,27 +21,21 @@ try {
 }
 
 
-/*
- Eski sürümden gelen verilerde
- başlangıç kasası yoksa 20.000 TL
- varsayılan olarak kullanılır.
-*/
+/* Eski kayıtlarla uyumluluk */
 
 if (
-    !Number.isFinite(
-        Number(data.start)
-    ) ||
+    !Number.isFinite(Number(data.start)) ||
     Number(data.start) <= 0
 ) {
+    data.start = DEFAULT_START_BANK;
+}
 
-    data.start =
-        DEFAULT_START_BANK;
+if (!Array.isArray(data.entries)) {
+    data.entries = [];
 }
 
 
-let selectedResult =
-    "KAZANDI";
-
+let selectedResult = "KAZANDI";
 
 const $ = id =>
     document.getElementById(id);
@@ -58,29 +46,13 @@ const $ = id =>
    ========================================= */
 
 function money(value) {
-
     return new Intl.NumberFormat(
         "tr-TR",
         {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         }
-    ).format(
-        Number(value) || 0
-    ) + " TL";
-}
-
-
-/* =========================================
-   VERİYİ KAYDET
-   ========================================= */
-
-function saveData() {
-
-    localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(data)
-    );
+    ).format(value) + " TL";
 }
 
 
@@ -89,16 +61,9 @@ function saveData() {
    ========================================= */
 
 function currentBank() {
-
-    if (
-        data.entries.length === 0
-    ) {
-
-        return Number(
-            data.start
-        );
+    if (data.entries.length === 0) {
+        return Number(data.start);
     }
-
 
     return Number(
         data.entries[
@@ -109,15 +74,23 @@ function currentBank() {
 
 
 /* =========================================
-   TÜM KASA ZİNCİRİNİ
-   YENİDEN HESAPLA
+   KAYDET
+   ========================================= */
+
+function saveData() {
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(data)
+    );
+}
+
+
+/* =========================================
+   TÜM GÜNLERİ YENİDEN HESAPLA
    ========================================= */
 
 function recalculateAll() {
-
-    let runningBank =
-        Number(data.start);
-
+    let runningBank = Number(data.start);
 
     data.entries.forEach(
         (item, index) => {
@@ -128,269 +101,114 @@ function recalculateAll() {
             const odds =
                 Number(item.odds);
 
-
             const stake =
                 runningBank *
                 risk /
                 100;
 
-
             let profitLoss;
 
-
             if (
-                item.result ===
-                "KAZANDI"
+                item.result === "KAZANDI"
             ) {
-
                 profitLoss =
                     stake *
                     (odds - 1);
-
             } else {
-
                 profitLoss =
                     -stake;
             }
-
 
             const endBank =
                 runningBank +
                 profitLoss;
 
-
             item.day =
                 index + 1;
-
 
             item.startBank =
                 runningBank;
 
-
             item.stake =
                 stake;
-
 
             item.profitLoss =
                 profitLoss;
 
-
             item.endBank =
                 endBank;
-
 
             runningBank =
                 endBank;
         }
     );
 
-
     saveData();
 }
 
 
 /* =========================================
-   BAŞLANGIÇ KASASI ALANI
-   ========================================= */
-
-function showStartBank() {
-
-    $("startBankInput").value =
-        Number(data.start);
-}
-
-
-/* =========================================
-   BAŞLANGIÇ KASASINI GÜNCELLE
-   ========================================= */
-
-$("updateStartBank")
-.addEventListener(
-    "click",
-    () => {
-
-        const newStartBank =
-            parseFloat(
-                $("startBankInput").value
-            );
-
-
-        if (
-            !Number.isFinite(
-                newStartBank
-            ) ||
-            newStartBank <= 0
-        ) {
-
-            alert(
-                "Geçerli bir başlangıç kasası gir."
-            );
-
-            showStartBank();
-
-            return;
-        }
-
-
-        /*
-         Aynı tutarsa işlem yapmaya
-         gerek yok.
-        */
-
-        if (
-            newStartBank ===
-            Number(data.start)
-        ) {
-
-            alert(
-                "Başlangıç kasası zaten bu tutarda."
-            );
-
-            return;
-        }
-
-
-        let approved;
-
-
-        if (
-            data.entries.length > 0
-        ) {
-
-            approved =
-                confirm(
-                    "Başlangıç kasasını " +
-                    money(newStartBank) +
-                    " olarak değiştirmek istiyor musun?\n\n" +
-                    "Mevcut günlük kayıtlar silinmeyecek. " +
-                    "Tüm kasa hesapları yeni başlangıç kasasına göre yeniden hesaplanacak."
-                );
-
-        } else {
-
-            approved =
-                confirm(
-                    "Başlangıç kasası " +
-                    money(newStartBank) +
-                    " olarak ayarlansın mı?"
-                );
-        }
-
-
-        if (!approved) {
-
-            showStartBank();
-
-            return;
-        }
-
-
-        data.start =
-            newStartBank;
-
-
-        /*
-         Bütün mevcut günleri
-         yeni başlangıç kasasına
-         göre yeniden hesapla.
-        */
-
-        recalculateAll();
-
-
-        render();
-
-
-        alert(
-            "Başlangıç kasası " +
-            money(newStartBank) +
-            " olarak güncellendi."
-        );
-    }
-);
-
-
-/* =========================================
-   YENİ GÜN ÖN İZLEME
+   YENİ GÜN ÖNİZLEME
    ========================================= */
 
 function calculatePreview() {
-
     const startBank =
         currentBank();
-
 
     const risk =
         parseFloat(
             $("risk").value
         ) || 0;
 
-
     const odds =
         parseFloat(
             $("odds").value
         );
-
 
     const stake =
         startBank *
         risk /
         100;
 
-
     $("stake").textContent =
         money(stake);
-
 
     if (
         !Number.isFinite(odds) ||
         odds <= 1
     ) {
-
         $("preview").textContent =
             "Oranı girince tahmini gün sonu burada görünecek.";
 
         return;
     }
 
-
     let profitLoss;
 
-
     if (
-        selectedResult ===
-        "KAZANDI"
+        selectedResult === "KAZANDI"
     ) {
-
         profitLoss =
             stake *
             (odds - 1);
-
     } else {
-
         profitLoss =
             -stake;
     }
-
 
     const endBank =
         startBank +
         profitLoss;
 
-
     if (
-        selectedResult ===
-        "KAZANDI"
+        selectedResult === "KAZANDI"
     ) {
-
         $("preview").textContent =
             "Tahmini net kâr: " +
             money(profitLoss) +
             " • Gün sonu: " +
             money(endBank);
-
     } else {
-
         $("preview").textContent =
             "Tahmini fire: " +
             money(stake) +
@@ -401,19 +219,16 @@ function calculatePreview() {
 
 
 /* =========================================
-   ANA EKRANI YENİLE
+   EKRANI YENİLE
    ========================================= */
 
 function render() {
-
     const bank =
         currentBank();
-
 
     const totalProfitLoss =
         bank -
         Number(data.start);
-
 
     const winningEntries =
         data.entries.filter(
@@ -422,14 +237,12 @@ function render() {
                 "KAZANDI"
         );
 
-
     const fireEntries =
         data.entries.filter(
             item =>
                 item.result ===
                 "FİRE"
         );
-
 
     const totalFire =
         fireEntries.reduce(
@@ -447,15 +260,10 @@ function render() {
     if (
         totalProfitLoss >= 0
     ) {
-
         $("totalPL").textContent =
             "Toplam Kâr/Zarar: +" +
-            money(
-                totalProfitLoss
-            );
-
+            money(totalProfitLoss);
     } else {
-
         $("totalPL").textContent =
             "Toplam Kâr/Zarar: -" +
             money(
@@ -469,10 +277,8 @@ function render() {
     $("winDays").textContent =
         winningEntries.length;
 
-
     $("lossDays").textContent =
         fireEntries.length;
-
 
     $("totalFire").textContent =
         money(totalFire);
@@ -482,33 +288,21 @@ function render() {
         money(
             Math.max(
                 0,
-                TARGET_LOW -
-                bank
+                TARGET_LOW - bank
             )
         );
-
 
     $("toHigh").textContent =
         money(
             Math.max(
                 0,
-                TARGET_HIGH -
-                bank
+                TARGET_HIGH - bank
             )
         );
 
 
-    /*
-     Başlangıç kasası alanında
-     her zaman kayıtlı tutarı göster.
-    */
-
-    showStartBank();
-
-
     const history =
         $("history");
-
 
     history.innerHTML =
         data.entries
@@ -516,17 +310,14 @@ function render() {
             (item, index) => {
 
                 const resultClass =
-                    item.result ===
-                    "KAZANDI"
+                    item.result === "KAZANDI"
                         ? "win"
                         : "fire";
-
 
                 const profitClass =
                     item.profitLoss >= 0
                         ? "pos"
                         : "neg";
-
 
                 const profitText =
                     item.profitLoss >= 0
@@ -541,22 +332,18 @@ function render() {
                               )
                           );
 
-
                 return `
-
                 <tr>
 
                     <td>
                         ${item.day}
                     </td>
 
-
                     <td>
                         ${money(
                             item.startBank
                         )}
                     </td>
-
 
                     <td>
 
@@ -571,13 +358,11 @@ function render() {
 
                     </td>
 
-
                     <td>
                         ${money(
                             item.stake
                         )}
                     </td>
-
 
                     <td>
 
@@ -590,7 +375,6 @@ function render() {
                             data-index="${index}">
 
                     </td>
-
 
                     <td>
 
@@ -605,14 +389,9 @@ function render() {
 
                     </td>
 
-
-                    <td
-                        class="${profitClass}">
-
+                    <td class="${profitClass}">
                         ${profitText}
-
                     </td>
-
 
                     <td>
 
@@ -623,7 +402,6 @@ function render() {
                         </b>
 
                     </td>
-
 
                     <td>
 
@@ -640,7 +418,6 @@ function render() {
                     </td>
 
                 </tr>
-
                 `;
             }
         )
@@ -660,7 +437,7 @@ function render() {
 
 
 /* =========================================
-   TABLO İÇİ İŞLEMLER
+   TABLO İÇİ DÜZENLEMELER
    ========================================= */
 
 function addTableEvents() {
@@ -683,19 +460,16 @@ function addTableEvents() {
                         this.dataset.index
                     );
 
-
                 const value =
                     parseFloat(
                         this.value
                     );
-
 
                 if (
                     !Number.isFinite(value) ||
                     value <= 0 ||
                     value > 100
                 ) {
-
                     alert(
                         "Risk % 0 ile 100 arasında olmalıdır."
                     );
@@ -705,12 +479,10 @@ function addTableEvents() {
                     return;
                 }
 
-
                 data.entries[
                     index
                 ].risk =
                     value;
-
 
                 recalculateAll();
 
@@ -737,18 +509,15 @@ function addTableEvents() {
                         this.dataset.index
                     );
 
-
                 const value =
                     parseFloat(
                         this.value
                     );
 
-
                 if (
                     !Number.isFinite(value) ||
                     value <= 1
                 ) {
-
                     alert(
                         "Geçerli bir oran gir."
                     );
@@ -758,12 +527,10 @@ function addTableEvents() {
                     return;
                 }
 
-
                 data.entries[
                     index
                 ].odds =
                     value;
-
 
                 recalculateAll();
 
@@ -790,27 +557,22 @@ function addTableEvents() {
                         this.dataset.index
                     );
 
-
                 if (
                     data.entries[
                         index
                     ].result ===
                     "KAZANDI"
                 ) {
-
                     data.entries[
                         index
                     ].result =
                         "FİRE";
-
                 } else {
-
                     data.entries[
                         index
                     ].result =
                         "KAZANDI";
                 }
-
 
                 recalculateAll();
 
@@ -837,12 +599,10 @@ function addTableEvents() {
                         this.dataset.index
                     );
 
-
                 const day =
                     data.entries[
                         index
                     ].day;
-
 
                 const approved =
                     confirm(
@@ -850,17 +610,14 @@ function addTableEvents() {
                         ". gün kaydı silinsin mi?"
                     );
 
-
                 if (!approved) {
                     return;
                 }
-
 
                 data.entries.splice(
                     index,
                     1
                 );
-
 
                 recalculateAll();
 
@@ -872,6 +629,134 @@ function addTableEvents() {
 
 
 /* =========================================
+   BAŞLANGIÇ KASASINI DEĞİŞTİR
+   ========================================= */
+
+$("changeStartBank")
+.addEventListener(
+    "click",
+    () => {
+
+        const entered =
+            prompt(
+                "Başlangıç kasasını gir:",
+                Number(data.start)
+            );
+
+        /*
+         İptal'e basıldıysa
+         hiçbir şey yapma.
+        */
+
+        if (entered === null) {
+            return;
+        }
+
+
+        /*
+         Türkiye'de kullanıcı
+         20.000 veya 20.000,50 gibi
+         yazarsa da mümkün olduğunca
+         düzgün okuyalım.
+        */
+
+        let cleaned =
+            String(entered)
+            .trim()
+            .replace(/\s/g, "");
+
+
+        if (
+            cleaned.includes(",")
+        ) {
+            cleaned =
+                cleaned
+                .replace(/\./g, "")
+                .replace(",", ".");
+        } else {
+
+            const dotCount =
+                (
+                    cleaned.match(/\./g) ||
+                    []
+                ).length;
+
+            if (
+                dotCount === 1 &&
+                /^\d{1,3}\.\d{3}$/.test(cleaned)
+            ) {
+                cleaned =
+                    cleaned.replace(".", "");
+            }
+        }
+
+
+        const newStartBank =
+            Number(cleaned);
+
+
+        if (
+            !Number.isFinite(
+                newStartBank
+            ) ||
+            newStartBank <= 0
+        ) {
+            alert(
+                "Geçerli bir başlangıç kasası gir."
+            );
+
+            return;
+        }
+
+
+        if (
+            newStartBank ===
+            Number(data.start)
+        ) {
+            return;
+        }
+
+
+        /*
+         Kayıt varsa önce onay al.
+        */
+
+        if (
+            data.entries.length > 0
+        ) {
+
+            const approved =
+                confirm(
+                    "Başlangıç kasası " +
+                    money(newStartBank) +
+                    " olarak değiştirilsin mi?\n\n" +
+                    "Mevcut günlük kayıtlar silinmeyecek. " +
+                    "Tüm günler yeni başlangıç kasasına göre yeniden hesaplanacak."
+                );
+
+            if (!approved) {
+                return;
+            }
+        }
+
+
+        data.start =
+            newStartBank;
+
+
+        /*
+         1. günden başlayarak
+         bütün zinciri tekrar hesapla.
+        */
+
+        recalculateAll();
+
+        render();
+    }
+);
+
+
+/* =========================================
    YENİ GÜN ALANLARI
    ========================================= */
 
@@ -880,7 +765,6 @@ $("risk").addEventListener(
     calculatePreview
 );
 
-
 $("odds").addEventListener(
     "input",
     calculatePreview
@@ -888,7 +772,7 @@ $("odds").addEventListener(
 
 
 /* =========================================
-   KAZANDI / FİRE SEÇİMİ
+   SONUÇ SEÇİMİ
    ========================================= */
 
 document
@@ -904,7 +788,6 @@ document
             selectedResult =
                 button.dataset.result;
 
-
             document
             .querySelectorAll(
                 ".choice"
@@ -917,11 +800,9 @@ document
 
             });
 
-
             button.classList.add(
                 "active"
             );
-
 
             calculatePreview();
         }
@@ -930,7 +811,7 @@ document
 
 
 /* =========================================
-   YENİ GÜN KAYDET
+   GÜNÜ KAYDET
    ========================================= */
 
 $("save").addEventListener(
@@ -941,7 +822,6 @@ $("save").addEventListener(
             parseFloat(
                 $("risk").value
             );
-
 
         const odds =
             parseFloat(
@@ -954,7 +834,6 @@ $("save").addEventListener(
             risk <= 0 ||
             risk > 100
         ) {
-
             alert(
                 "Risk % 0 ile 100 arasında olmalıdır."
             );
@@ -967,7 +846,6 @@ $("save").addEventListener(
             !Number.isFinite(odds) ||
             odds <= 1
         ) {
-
             alert(
                 "Geçerli bir oran gir."
             );
@@ -979,27 +857,21 @@ $("save").addEventListener(
         const startBank =
             currentBank();
 
-
         const stake =
             startBank *
             risk /
             100;
 
-
         let profitLoss;
 
 
         if (
-            selectedResult ===
-            "KAZANDI"
+            selectedResult === "KAZANDI"
         ) {
-
             profitLoss =
                 stake *
                 (odds - 1);
-
         } else {
-
             profitLoss =
                 -stake;
         }
@@ -1013,8 +885,7 @@ $("save").addEventListener(
         data.entries.push({
 
             day:
-                data.entries.length +
-                1,
+                data.entries.length + 1,
 
             startBank:
                 startBank,
@@ -1041,10 +912,7 @@ $("save").addEventListener(
 
         saveData();
 
-
-        $("odds").value =
-            "";
-
+        $("odds").value = "";
 
         render();
     }
@@ -1052,7 +920,7 @@ $("save").addEventListener(
 
 
 /* =========================================
-   TÜM KAYITLARI SİL
+   TÜM GÜNLERİ SİL
    ========================================= */
 
 $("reset").addEventListener(
@@ -1061,9 +929,8 @@ $("reset").addEventListener(
 
         const approved =
             confirm(
-                "Tüm günlük kayıtlar silinsin mi?\n\nBaşlangıç kasası değişmeden kalacaktır."
+                "Tüm günlük kayıtlar silinsin mi?\n\nBaşlangıç kasası korunacaktır."
             );
-
 
         if (!approved) {
             return;
@@ -1071,14 +938,12 @@ $("reset").addEventListener(
 
 
         /*
-         ÖNEMLİ:
-         Artık başlangıç kasasını
-         20.000 TL'ye döndürmüyoruz.
+         Sadece günlük kayıtları siliyoruz.
+         Kullanıcının belirlediği başlangıç
+         kasasına dokunmuyoruz.
         */
 
-        data.entries =
-            [];
-
+        data.entries = [];
 
         saveData();
 
