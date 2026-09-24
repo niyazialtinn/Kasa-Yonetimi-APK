@@ -1,69 +1,148 @@
 <!doctype html>
 <html lang="tr">
+
 <head>
     <meta charset="utf-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1">
 
     <title>Kasa Yönetimi</title>
-    <link rel="stylesheet" href="style.css">
+
+    <link
+        rel="stylesheet"
+        href="style.css">
 </head>
+
 
 <body>
 
+
+<!-- ==============================
+     ÜST BAŞLIK
+     ============================== -->
+
 <header>
+
     <div>
-        <h1>💰 Kasa Yönetimi</h1>
-        <p>Günlük Kasa Takip Sistemi</p>
+
+        <h1>
+            💰 Kasa Yönetimi
+        </h1>
+
+        <p>
+            Günlük Kasa Takip Sistemi
+        </p>
+
     </div>
+
 </header>
+
+
 
 <main>
 
-    <!-- ÖZET -->
+
+    <!-- ==============================
+         ÖZET
+         ============================== -->
+
     <section class="summary">
 
+
+        <!-- GÜNCEL KASA -->
+
         <div class="big card">
-            <span>Güncel Kasa</span>
+
+            <span>
+                Güncel Kasa
+            </span>
 
             <strong id="currentBank">
                 20.000,00 TL
             </strong>
 
             <small id="totalPL">
-                Toplam Kâr/Zarar: 0,00 TL
+                Toplam Kâr/Zarar:
+                0,00 TL
             </small>
+
         </div>
+
+
+
+        <!-- İSTATİSTİKLER -->
 
         <div class="stats">
 
-            <div class="card">
-                <span>Kazançlı Gün</span>
-                <b id="winDays">0</b>
-            </div>
 
             <div class="card">
-                <span>Fireli Gün</span>
-                <b id="lossDays">0</b>
+
+                <span>
+                    Kazançlı Gün
+                </span>
+
+                <b id="winDays">
+                    0
+                </b>
+
             </div>
 
+
+
             <div class="card">
-                <span>Toplam Fire</span>
+
+                <span>
+                    Fireli Gün
+                </span>
+
+                <b id="lossDays">
+                    0
+                </b>
+
+            </div>
+
+
+
+            <div class="card">
+
+                <span>
+                    Toplam Fire
+                </span>
+
                 <b id="totalFire">
                     0,00 TL
                 </b>
+
             </div>
 
+
+
             <div class="card">
-                <span>Hedef</span>
-                <b>150K – 200K</b>
+
+                <span>
+                    Hedef
+                </span>
+
+                <b>
+                    150K – 200K
+                </b>
+
             </div>
+
 
         </div>
 
+
+
+        <!-- HEDEFLER -->
+
         <div class="targets card">
 
+
             <div>
+
                 <span>
                     150.000 TL'ye Kalan
                 </span>
@@ -71,9 +150,13 @@
                 <b id="toLow">
                     130.000,00 TL
                 </b>
+
             </div>
 
+
+
             <div>
+
                 <span>
                     200.000 TL'ye Kalan
                 </span>
@@ -81,21 +164,37 @@
                 <b id="toHigh">
                     180.000,00 TL
                 </b>
+
             </div>
 
+
         </div>
+
 
     </section>
 
 
-    <!-- YENİ GÜN -->
+
+    <!-- ==============================
+         YENİ GÜN
+         ============================== -->
+
     <section class="panel">
 
-        <h2>➕ Yeni Gün</h2>
+
+        <h2>
+            ➕ Yeni Gün
+        </h2>
+
+
 
         <div class="row">
 
+
+            <!-- RİSK -->
+
             <label>
+
                 Risk %
 
                 <input
@@ -105,10 +204,15 @@
                     max="100"
                     step="0.01"
                     value="20">
+
             </label>
 
 
+
+            <!-- ORAN -->
+
             <label>
+
                 Oran
 
                 <input
@@ -117,10 +221,15 @@
                     min="1.01"
                     step="0.01"
                     placeholder="Örn. 1.60">
+
             </label>
+
 
         </div>
 
+
+
+        <!-- OYNANACAK TUTAR -->
 
         <div class="calc">
 
@@ -135,12 +244,17 @@
         </div>
 
 
+
+        <!-- SONUÇ -->
+
         <div class="result-title">
             Sonuç
         </div>
 
 
+
         <div class="choices">
+
 
             <button
                 class="choice win active"
@@ -151,6 +265,7 @@
             </button>
 
 
+
             <button
                 class="choice fire"
                 data-result="FİRE">
@@ -159,8 +274,12 @@
 
             </button>
 
+
         </div>
 
+
+
+        <!-- ÖN İZLEME -->
 
         <div
             class="preview"
@@ -172,6 +291,9 @@
         </div>
 
 
+
+        <!-- KAYDET -->
+
         <button
             id="save"
             class="primary">
@@ -180,15 +302,25 @@
 
         </button>
 
+
     </section>
 
 
-    <!-- EXCEL TARZI TABLO -->
+
+    <!-- ==============================
+         GÜNLÜK KAYITLAR
+         ============================== -->
+
     <section class="panel">
+
 
         <div class="panel-head">
 
-            <h2>📊 Günlük Kayıtlar</h2>
+
+            <h2>
+                📊 Günlük Kayıtlar
+            </h2>
+
 
             <button
                 id="reset"
@@ -198,29 +330,38 @@
 
             </button>
 
+
         </div>
 
 
+
+        <!-- TABLO -->
+
         <div class="table-wrap">
+
 
             <table>
 
+
                 <thead>
+
 
                     <tr>
 
-                        <th>Gün</th>
-
                         <th>
-                            Başlangıç Kasa
+                            Gün
                         </th>
 
                         <th>
-                            Risk %
+                            Baş.<br>Kasa
                         </th>
 
                         <th>
-                            Oynanan Tutar
+                            Risk
+                        </th>
+
+                        <th>
+                            Tutar
                         </th>
 
                         <th>
@@ -232,24 +373,29 @@
                         </th>
 
                         <th>
-                            Kâr / Zarar
+                            K/Z
                         </th>
 
                         <th>
-                            Gün Sonu Kasa
+                            Son<br>Kasa
                         </th>
 
                     </tr>
 
+
                 </thead>
+
 
 
                 <tbody id="history">
                 </tbody>
 
+
             </table>
 
+
         </div>
+
 
 
         <div
@@ -260,11 +406,17 @@
 
         </div>
 
+
     </section>
+
 
 </main>
 
+
+
 <script src="app.js"></script>
 
+
 </body>
+
 </html>
